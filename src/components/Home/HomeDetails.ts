@@ -1,0 +1,25 @@
+import styled, { keyframes } from "styled-components";
+
+const pulse = keyframes`50% { opacity: .55; }`;
+export const Page = styled.main`min-height:100vh;display:grid;place-items:center;padding:48px 24px;background:#191414;color:#f6f6f6;font-family:Arial,Helvetica,sans-serif;`;
+export const Card = styled.section`width:min(100%,680px);text-align:center;`;
+export const Brand = styled.h1`margin:0;color:#1ed760;font-size:clamp(2.5rem,6vw,4.5rem);line-height:1;font-weight:800;letter-spacing:-.075em;`;
+export const Subtitle = styled.p`margin:20px 0 42px;color:#d1d1d1;font-size:clamp(1rem,2vw,1.25rem);`;
+export const Form = styled.form`display:grid;gap:16px;`;
+export const HiddenLabel = styled.label`position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;`;
+export const UrlInput = styled.input`width:100%;box-sizing:border-box;border:1px solid #5b5b5b;border-radius:10px;background:#242424;padding:18px 20px;color:#fff;font:inherit;outline:none;transition:border-color .2s,box-shadow .2s;&::placeholder{color:#a5a5a5;}&:focus{border-color:#1ed760;box-shadow:0 0 0 3px rgba(30,215,96,.2);}`;
+export const FileLabel = styled.label`display:flex;align-items:center;justify-content:center;gap:8px;color:#cfcfcf;font-size:.875rem;cursor:pointer;text-decoration:underline;text-underline-offset:4px;&:focus-within{outline:2px solid #1ed760;outline-offset:4px;border-radius:3px;}`;
+export const FileInput = styled.input`position:absolute;width:1px;height:1px;opacity:0;`;
+export const Button = styled.button`justify-self:center;border:0;border-radius:999px;padding:15px 35px;background:#1ed760;color:#071c0d;font-size:.78rem;font-weight:800;letter-spacing:.12em;cursor:pointer;transition:transform .2s,background .2s;&:hover:not(:disabled){background:#42e77d;transform:scale(1.03);}&:focus-visible{outline:3px solid white;outline-offset:3px;}&:disabled{cursor:not-allowed;opacity:.55;}`;
+export const Status = styled.section`margin-top:44px;padding-top:30px;border-top:1px solid #4a4a4a;text-align:left;`;
+export const StatusTitle = styled.h2`margin:0 0 20px;font-size:1rem;color:#fff;`;
+export const ProgressTrack = styled.div`height:10px;border-radius:99px;background:#3a3a3a;overflow:hidden;`;
+export const ProgressFill = styled.div<{ $progress: number }>`width:${({ $progress }) => $progress}%;height:100%;border-radius:inherit;background:#1ed760;transition:width .3s ease;`;
+export const Row = styled.div`display:flex;justify-content:space-between;gap:16px;margin-top:12px;color:#d6d6d6;font-size:.92rem;`;
+export const Processing = styled.p`margin:24px 0 0;color:#fff;font-size:1rem;word-break:break-word;strong{color:#1ed760;}`;
+export const Hint = styled.p`margin:14px 0 0;color:#b8b8b8;font-size:.85rem;line-height:1.55;`;
+export const ErrorText = styled.p`margin:18px 0 0;color:#ff9e9e;`;
+export const Success = styled.div`padding:24px;border:1px solid rgba(30,215,96,.45);border-radius:12px;background:#1d241e;h2{margin:0;color:#1ed760;}p{color:#ddd;}.total{font-size:.9rem;}`;
+export const Failures = styled.ul`margin:18px 0 0;padding-left:20px;color:#ffb3b3;font-size:.86rem;line-height:1.65;`;
+export const Loading = styled.span`animation:${pulse} 1.1s ease-in-out infinite;`;
+export const LegalNote = styled.p`margin:34px auto 0;max-width:570px;color:#949494;font-size:.76rem;line-height:1.55;@media(max-width:480px){margin-top:28px;}`;
