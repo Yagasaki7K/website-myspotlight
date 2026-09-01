@@ -3,7 +3,8 @@ import { ChangeEvent, FormEvent, useEffect, useMemo, useRef, useState } from "re
 import { toast } from "sonner";
 import { LocalAudioSource } from "@/services/audio";
 import { getPlaylist } from "@/services/spotify";
-import { createZip, downloadBlob, type ZipEntry } from "@/services/zip";
+import { downloadBlob } from "@/services/zip";
+import { processPlaylist } from "@/services/process";
 import { formatTrackFilename, formatZipFilename } from "@/utils/filename";
 import { estimateRemainingTime, formatElapsedTime } from "@/utils/formatTime";
 import { validateSpotifyUrl } from "@/utils/spotify";
@@ -19,9 +20,11 @@ export default function Home() {
   const selectFiles = (event: ChangeEvent<HTMLInputElement>) => setFiles(Array.from(event.target.files ?? []));
   async function processTracks(data: SpotifyPlaylist, suppliedFiles: File[]) {
     if (!suppliedFiles.length) throw new Error("Selecione os arquivos MP3 autorizados antes de gerar o pacote.");
-    const source = new LocalAudioSource(suppliedFiles); const entries: ZipEntry[] = []; const failed: ProcessingFailure[] = []; const names = new Set<string>();
-    const queue = [...data.tracks]; const workers = Array.from({ length: Math.min(3, queue.length) }, async () => { let track: SpotifyTrack | undefined; while ((track = queue.shift())) { if (cancelled.current) return; setCurrent(track); try { const blob = await source.getAudio(track); entries[track.playlistPosition] = { name: formatTrackFilename(track, names), blob }; } catch (cause) { failed.push({ track, reason: cause instanceof Error ? cause.message : "Falha desconhecida" }); } finally { setDone((value) => value + 1); await new Promise<void>((resolve) => window.setTimeout(resolve, 0)); } } });
-    await Promise.all(workers); if (cancelled.current) return; const result = await createZip(entries.filter(Boolean)); setFailures(failed); setZip(result); setState("completed"); toast.success("ZIP criado com sucesso.");
+    const result = await processPlaylist(data, new LocalAudioSource(suppliedFiles), { concurrency: 3, onProgress: (completed, track) => { setCurrent(track); setDone(completed); } });
+    if (cancelled.current) return;
+    setFailures(result.failures); setZip(result.zip); setState("completed");
+    if (result.failures.length) toast.warning(`${result.failures.length} faixa(s) não puderam ser processadas.`);
+    toast.success("ZIP criado com sucesso.");
   }
   async function submit(event: FormEvent) { event.preventDefault(); cancelled.current = false; setError(""); setZip(null); setFailures([]); setDone(0); setCurrent(null); const validation = validateSpotifyUrl(url); if (!validation.valid) { toast.error(validation.message); return; } if (!files.length) { const message = "Selecione os arquivos MP3 autorizados antes de gerar o pacote."; setError(message); toast.error(message); return; } try { setState("loading"); const data = await getPlaylist(validation.playlistId!); if (cancelled.current) return; setPlaylist(data); toast.success(`${data.tracks.length} faixas encontradas.`); setState("processing"); setStartedAt(Date.now()); toast.message("Processamento iniciado."); await processTracks(data, files); } catch (cause) { if (!cancelled.current) { const message = cause instanceof Error ? cause.message : "Ocorreu um erro inesperado."; setError(message); setState("error"); toast.error(message); } } }
   const isWorking = state === "loading" || state === "processing"; const progress = playlist ? Math.round((done / playlist.tracks.length) * 100) : 0;

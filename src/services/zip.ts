@@ -8,7 +8,8 @@ const join = (parts: Uint8Array[]) => { const result = new Uint8Array(parts.redu
 
 export interface ZipEntry { name: string; blob: Blob }
 export async function createZip(entries: ZipEntry[]): Promise<Blob> {
-  const files = await Promise.all(entries.map(async ({ name, blob }) => ({ name: encoder.encode(name), data: new Uint8Array(await blob.arrayBuffer()) })));
+  const files: Array<{ name: Uint8Array; data: Uint8Array }> = [];
+  for (const { name, blob } of entries) files.push({ name: encoder.encode(name), data: new Uint8Array(await blob.arrayBuffer()) });
   let offset = 0; const locals: Uint8Array[] = []; const central: Uint8Array[] = [];
   for (const file of files) {
     const crc = crc32(file.data); const flag = 0x0800;
