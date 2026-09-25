@@ -20,7 +20,7 @@
     "react-dom": "^19.3.0",
     "sonner": "^2.0.8",
     "styled-components": "^6.5.3",
-    "supabase": "^2.117.0"
+    "supabase": "^2.118.0"
   },
   "devDependencies": {
     "@types/node": "^26.6.2",
